@@ -33,26 +33,19 @@ class LoginViewModel(
             is LoginScreenEvent.Init -> {
                 viewModelScope.launch {
                     val prefs = userPreferencesRepository.userPreferencesFlow.first()
-                        // Original setState call - temporarily commented out for diagnostics
-                        /*
+                        // Restore original setState call
                     setState {
                         copy(
                             selectedCountryCode = prefs.countryCode,
                             phoneNumber = if (prefs.rememberMe) prefs.phoneNumber else "",
                             isRememberMeChecked = prefs.rememberMe,
                                 currentLanguage = prefs.language,
-                                isPhoneNumberValid = false // Re-validate if needed, or load saved validation
+                                isPhoneNumberValid = false, // Reset validation; phone number might need re-validation
+                                errorMessageKey = null // Clear any previous diagnostic or other errors
                         )
                     }
-                        */
-                        // Simplified setState call for diagnostics:
-                        // This will toggle the isLoading flag.
-                        // If this works, the issue is likely with how 'prefs' are used in the original block.
-                        // If this still fails, the issue is with _uiState.value being null at a fundamental level.
-                        setState { copy(isLoading = !this.isLoading, errorMessageKey = "diag_init_ran") }
                 }
             }
-                // ... other event handlers ...
             is LoginScreenEvent.CountryCodeSelected -> {
                 setState {
                     copy(
