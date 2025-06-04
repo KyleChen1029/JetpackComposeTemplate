@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material3.TopAppBarDefaults // For M3 TopAppBar colors
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,7 +67,11 @@ fun CountryCodeScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_button_desc))
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors( // M3 colors
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             )
         }
     ) { paddingValues ->
@@ -74,18 +79,23 @@ fun CountryCodeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp) // Adjusted padding
         ) {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 label = { Text(stringResource(id = R.string.search_country_label)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), // Add padding below search
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(id = R.string.search_icon_desc)) },
-                singleLine = true
+                singleLine = true,
+                shape = MaterialTheme.shapes.medium, // M3 shape
+                colors = TextFieldDefaults.outlinedTextFieldColors( // M3 colors
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                )
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // Spacer(modifier = Modifier.height(16.dp)) // Removed spacer, OutlinedTextField has padding bottom
 
             if (filteredCountries.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -101,7 +111,8 @@ fun CountryCodeScreen(
                             loginViewModel.sendEvent(LoginScreenEvent.CountryCodeSelected(selectedCountry.dialCode))
                             navController.popBackStack() // Navigate back to LoginScreen
                         }
-                        Divider()
+                        // Consider using ListItem for better M3 alignment or a custom row with Divider
+                        // Divider is now part of CountryCodeItem
                     }
                 }
             }
@@ -114,20 +125,28 @@ fun CountryCodeItem(
     country: Country,
     onCountrySelected: (Country) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCountrySelected(country) }
-            .padding(vertical = 12.dp, horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // In a real app, you might have a flag icon here
-        // For now, just text
-        Text(
-            text = "${country.name} (${country.dialCode})",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f)
-        )
+    Column { // Wrap Row and Divider in a Column
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onCountrySelected(country) }
+                .padding(horizontal = 16.dp, vertical = 16.dp), // M3 standard list item padding
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Optional: Add a flag image here if available
+            // Image(painter = painterResource(id = getFlagForCountry(country.code)), ...)
+            Text(
+                text = country.name, // Display only name, dial code is separate
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = country.dialCode, // Display dial code separately
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant // Subtler color
+            )
+        }
+        Divider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant) // M3 Divider
     }
 }
 
