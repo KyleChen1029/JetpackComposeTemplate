@@ -33,24 +33,26 @@ class LoginViewModel(
             is LoginScreenEvent.Init -> {
                 viewModelScope.launch {
                     val prefs = userPreferencesRepository.userPreferencesFlow.first()
+                        // Original setState call - temporarily commented out for diagnostics
+                        /*
                     setState {
                         copy(
                             selectedCountryCode = prefs.countryCode,
                             phoneNumber = if (prefs.rememberMe) prefs.phoneNumber else "",
                             isRememberMeChecked = prefs.rememberMe,
-                            currentLanguage = prefs.language, // Load language
-                            // Reset validation state, phone number might need re-validation if loaded
-                            isPhoneNumberValid = false,
-                            errorMessageKey = null
+                                currentLanguage = prefs.language,
+                                isPhoneNumberValid = false // Re-validate if needed, or load saved validation
                         )
                     }
-                    // If phone number is loaded and remember me is checked, validate it
-                    if (prefs.rememberMe && uiState.value.phoneNumber.isNotEmpty()) {
-                        validatePhoneNumber(uiState.value.selectedCountryCode, uiState.value.phoneNumber)
-                    }
-                    // MainActivity will observe uiState.currentLanguage and recreate if necessary.
+                        */
+                        // Simplified setState call for diagnostics:
+                        // This will toggle the isLoading flag.
+                        // If this works, the issue is likely with how 'prefs' are used in the original block.
+                        // If this still fails, the issue is with _uiState.value being null at a fundamental level.
+                        setState { copy(isLoading = !this.isLoading, errorMessageKey = "diag_init_ran") }
                 }
             }
+                // ... other event handlers ...
             is LoginScreenEvent.CountryCodeSelected -> {
                 setState {
                     copy(
@@ -95,19 +97,12 @@ class LoginViewModel(
                                 uiState.value.phoneNumber
                             )
                         } else {
-                            // Ensure details are cleared if "Remember Me" was unchecked during this session
-                            // updateRememberMe(false) already clears them from DataStore.
-                            // If it was checked, then unchecked, then login, this ensures it's not saved.
-                            // Explicitly ensuring DataStore reflects "not remembering" if it's unchecked now.
                             userPreferencesRepository.updateRememberMe(false)
                         }
                     }
                     performLogin()
                 } else {
-                     if (uiState.value.errorMessageKey == null && uiState.value.phoneNumber.isNotEmpty()) {
                         setState { copy(errorMessageKey = "error_invalid_phone_number_format") }
-                    } else if (uiState.value.errorMessageKey == null && uiState.value.phoneNumber.isEmpty()) {
-                        setState { copy(errorMessageKey = "error_phone_cannot_be_empty") }
                     }
                 }
             }
