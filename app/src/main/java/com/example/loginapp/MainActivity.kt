@@ -29,10 +29,10 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import java.util.Locale // Ensure this is imported
 
 // AppRoutes object should be here or accessible (already defined in previous steps)
-// object AppRoutes {
-//     const val LOGIN_SCREEN = "login"
-//     const val COUNTRY_CODE_SCREEN = "country_code"
-// }
+object AppRoutes {
+    const val LOGIN_SCREEN = "login"
+    const val COUNTRY_CODE_SCREEN = "country_code"
+}
 
 class MainActivity : ComponentActivity() {
 
