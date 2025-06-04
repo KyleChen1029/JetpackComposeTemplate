@@ -16,26 +16,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel // Ensure this is the correct viewModel import
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.loginapp.core.LocaleHelper
 import com.example.loginapp.features.login.LoginViewModel
 import com.example.loginapp.features.login.LoginViewModelFactory
-import com.example.loginapp.features.login.ui.LoginScreen
-import com.example.loginapp.features.countrycode.ui.CountryCodeScreen
+import com.example.loginapp.features.login.ui.LoginScreen // Ensure correct import
+import com.example.loginapp.features.countrycode.ui.CountryCodeScreen // Ensure correct import
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import java.util.Locale
 
-object AppRoutes { // Ensure AppRoutes is defined and accessible
+object AppRoutes {
     const val LOGIN_SCREEN = "login"
     const val COUNTRY_CODE_SCREEN = "country_code"
 }
 
 class MainActivity : ComponentActivity() {
 
-    // Initialize with a consistent default. ViewModel will load persisted lang later.
     private var currentLanguage: String = "zh-TW"
     private lateinit var loginViewModel: LoginViewModel
 
@@ -51,15 +50,13 @@ class MainActivity : ComponentActivity() {
         val factory = LoginViewModelFactory(applicationContext)
         loginViewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
-        // Initialize PhoneNumberUtil in ViewModel
         val phoneNumberUtil = PhoneNumberUtil.createInstance(applicationContext)
         loginViewModel.initializePhoneNumberUtil(phoneNumberUtil)
 
-        // Removed direct read of loginViewModel.uiState.value here.
-        // MainActivity.currentLanguage will be updated by LaunchedEffect if needed after ViewModel loads state.
-
         setContent {
-            val appState by loginViewModel.uiState.collectAsState()
+            // Provide explicit initial value to collectAsState
+            val appState by loginViewModel.uiState.collectAsState(initial = loginViewModel.initialState)
+
             Log.d("MainActivity", "setContent: Composing with ViewModel's language: ${appState.currentLanguage}. MainActivity's currentLanguage: $currentLanguage")
 
             LaunchedEffect(appState.currentLanguage) {
@@ -86,8 +83,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// AppNavigation, LoginAppTheme, DefaultPreview should remain as previously defined.
-// Ensure correct imports and definitions for these are present.
 @Composable
 fun AppNavigation(loginViewModel: LoginViewModel) {
     val navController = rememberNavController()
@@ -113,7 +108,6 @@ fun LoginAppTheme(key: Any? = null, content: @Composable () -> Unit) {
 fun DefaultPreview() {
     val context = LocalContext.current
     val factory = LoginViewModelFactory(context.applicationContext)
-    // Use the Hilt/ViewModel convention for previews if applicable, or ensure factory provides a valid ViewModel
     val loginViewModel: LoginViewModel = viewModel(factory = factory)
     LoginAppTheme {
         AppNavigation(loginViewModel)
