@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  */
 abstract class BaseViewModel<S : UiState, E : UiEvent> : ViewModel() {
 
-    private val _uiState: MutableStateFlow<S> by lazy { MutableStateFlow(initialState) }
+        private val _uiState: MutableStateFlow<S> = MutableStateFlow(initialState)
     val uiState: StateFlow<S> = _uiState.asStateFlow()
 
     private val _event: MutableSharedFlow<E> = MutableSharedFlow()
