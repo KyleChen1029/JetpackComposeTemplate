@@ -14,7 +14,7 @@ class LoginViewModel(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : BaseViewModel<LoginScreenState, LoginScreenEvent>() {
 
-    override val initialState: LoginScreenState = LoginScreenState()
+        public override val initialState: LoginScreenState = LoginScreenState()
     private var phoneNumberUtil: PhoneNumberUtil? = null
 
     init {

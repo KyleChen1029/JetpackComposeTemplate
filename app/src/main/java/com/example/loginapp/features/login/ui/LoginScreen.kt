@@ -9,13 +9,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.compose.viewModel // Keep for Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loginapp.AppRoutes
 import com.example.loginapp.features.login.LoginViewModel
 import com.example.loginapp.features.login.LoginScreenState
 import com.example.loginapp.features.login.LoginScreenEvent
+import com.example.loginapp.features.login.LoginViewModelFactory // Needed for Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,9 +28,10 @@ import com.example.loginapp.R // Import R class
 @Composable
 fun LoginScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel = viewModel() // Obtain ViewModel instance
+    loginViewModel: LoginViewModel // ViewModel is now a direct parameter
 ) {
-    val uiState by loginViewModel.uiState.collectAsState()
+    // Collect state from ViewModel, providing an initial value
+    val uiState by loginViewModel.uiState.collectAsState(initial = loginViewModel.initialState)
 
     LoginScreenContent(
         navController = navController,
@@ -201,7 +203,7 @@ fun LoginScreenContentPreview() {
         isRememberMeChecked = true,
         currentLanguage = "en",
         isLoading = false,
-        errorMessageKey = null, // Corrected
+        errorMessageKey = null,
         isPhoneNumberValid = true
     )
     MaterialTheme { // Wrap with MaterialTheme for preview
@@ -216,7 +218,10 @@ fun LoginScreenContentPreview() {
 @Preview(showBackground = true, name = "Login Screen Content - Loading")
 @Composable
 fun LoginScreenContentLoadingPreview() {
-    val previewState = LoginScreenState(isLoading = true, isPhoneNumberValid = true)
+    val context = LocalContext.current
+    val factory = LoginViewModelFactory(context.applicationContext)
+    val loginViewModel: LoginViewModel = viewModel(factory = factory) // Use factory for preview consistency
+    val previewState = loginViewModel.initialState.copy(isLoading = true, isPhoneNumberValid = true)
     MaterialTheme {
         LoginScreenContent(
             navController = rememberNavController(),
@@ -229,7 +234,10 @@ fun LoginScreenContentLoadingPreview() {
 @Preview(showBackground = true, name = "Login Screen Content - Error")
 @Composable
 fun LoginScreenContentErrorPreview() {
-    val previewState = LoginScreenState(errorMessageKey = "error_login_failed", isPhoneNumberValid = true)
+    val context = LocalContext.current
+    val factory = LoginViewModelFactory(context.applicationContext)
+    val loginViewModel: LoginViewModel = viewModel(factory = factory) // Use factory for preview consistency
+    val previewState = loginViewModel.initialState.copy(errorMessageKey = "error_login_failed", isPhoneNumberValid = true)
     MaterialTheme {
         LoginScreenContent(
             navController = rememberNavController(),
