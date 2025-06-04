@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">로그인앱</string>
+    <string name="login_register_title">로그인 / 등록</string>
+    <string name="country_code_button_text">국가 코드: %s</string>
+    <string name="phone_number_label">전화번호</string>
+    <string name="remember_me_label">기억하기</string>
+    <string name="login_button_text">로그인</string>
+    <string name="lang_en">영</string>
+    <string name="lang_ko">한</string>
+    <string name="lang_ja">일</string>
+    <string name="lang_zh_tw">중</string>
+    <string name="select_country_code_title">국가 코드 선택</string>
+    <string name="search_country_label">국가 검색</string>
+    <string name="back_button_desc">뒤로</string>
+    <string name="search_icon_desc">검색 아이콘</string>
+    <string name="no_countries_found">국가를 찾을 수 없습니다.</string>
+    <string name="current_language_debug_label">현재 언어 (상태에서): %s</string>
+    <string name="error_invalid_phone_number_format">잘못된 전화번호 형식입니다</string>
+    <string name="error_login_failed">로그인 실패. 다시 시도하십시오.</string>
+    <string name="error_invalid_phone_for_region">선택한 지역의 전화번호가 잘못되었습니다.</string>
+    <string name="error_parsing_phone_number">전화번호 분석 오류입니다.</string>
+    <string name="error_phone_not_verifiable">현재 전화번호 형식을 확인할 수 없습니다.</string>
+    <string name="error_phone_cannot_be_empty">전화번호는 비워 둘 수 없습니다.</string>
+    <string name="error_region_not_determinable">유효성 검사를 위한 지역을 확인할 수 없습니다. 번호를 확인하십시오.</string>
+    <string name="loading_text">로딩 중...</string>
+</resources>

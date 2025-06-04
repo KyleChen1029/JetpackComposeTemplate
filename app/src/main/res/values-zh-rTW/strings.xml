@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">登入應用程式</string>
+    <string name="login_register_title">登入 / 註冊</string>
+    <string name="country_code_button_text">國碼: %s</string>
+    <string name="phone_number_label">手機號碼</string>
+    <string name="remember_me_label">記住我</string>
+    <string name="login_button_text">登入</string>
+    <string name="lang_en">英</string>
+    <string name="lang_ko">韓</string>
+    <string name="lang_ja">日</string>
+    <string name="lang_zh_tw">繁</string>
+    <string name="select_country_code_title">選擇國碼</string>
+    <string name="search_country_label">搜尋國家</string>
+    <string name="back_button_desc">返回</string>
+    <string name="search_icon_desc">搜尋圖示</string>
+    <string name="no_countries_found">找不到國家。</string>
+    <string name="current_language_debug_label">目前語言 (來自狀態): %s</string>
+    <string name="error_invalid_phone_number_format">手機號碼格式無效</string>
+    <string name="error_login_failed">登入失敗，請再試一次。</string>
+    <string name="error_invalid_phone_for_region">所選地區的手機號碼無效。</string>
+    <string name="error_parsing_phone_number">解析手機號碼時發生錯誤。</string>
+    <string name="error_phone_not_verifiable">目前無法驗證手機號碼格式。</string>
+    <string name="error_phone_cannot_be_empty">手機號碼不能為空。</string>
+    <string name="error_region_not_determinable">無法確定驗證區域，請檢查號碼。</string>
+    <string name="loading_text">載入中...</string>
+</resources>

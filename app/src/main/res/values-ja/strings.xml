@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">ログインアプリ</string>
+    <string name="login_register_title">ログイン / 登録</string>
+    <string name="country_code_button_text">国コード: %s</string>
+    <string name="phone_number_label">電話番号</string>
+    <string name="remember_me_label">記憶する</string>
+    <string name="login_button_text">ログイン</string>
+    <string name="lang_en">英</string>
+    <string name="lang_ko">韓</string>
+    <string name="lang_ja">日</string>
+    <string name="lang_zh_tw">中</string>
+    <string name="select_country_code_title">国コードを選択</string>
+    <string name="search_country_label">国を検索</string>
+    <string name="back_button_desc">戻る</string>
+    <string name="search_icon_desc">検索アイコン</string>
+    <string name="no_countries_found">国が見つかりません。</string>
+    <string name="current_language_debug_label">現在の言語 (状態より): %s</string>
+    <string name="error_invalid_phone_number_format">電話番号の形式が無効です</string>
+    <string name="error_login_failed">ログインに失敗しました。もう一度お試しください。</string>
+    <string name="error_invalid_phone_for_region">選択した地域の電話番号が無効です。</string>
+    <string name="error_parsing_phone_number">電話番号の解析エラーです。</string>
+    <string name="error_phone_not_verifiable">現在、電話番号の形式を確認できません。</string>
+    <string name="error_phone_cannot_be_empty">電話番号は空にできません。</string>
+    <string name="error_region_not_determinable">検証用の地域を特定できませんでした。番号を確認してください。</string>
+    <string name="loading_text">読み込み中...</string>
+</resources>
