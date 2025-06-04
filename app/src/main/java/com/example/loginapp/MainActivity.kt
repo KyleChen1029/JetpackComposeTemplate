@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.compose.viewModel // Ensure this is the correct viewModel import
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,76 +26,53 @@ import com.example.loginapp.features.login.LoginViewModelFactory
 import com.example.loginapp.features.login.ui.LoginScreen
 import com.example.loginapp.features.countrycode.ui.CountryCodeScreen
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
-import java.util.Locale // Ensure this is imported
+import java.util.Locale
 
-// AppRoutes object should be here or accessible (already defined in previous steps)
-object AppRoutes {
+object AppRoutes { // Ensure AppRoutes is defined and accessible
     const val LOGIN_SCREEN = "login"
     const val COUNTRY_CODE_SCREEN = "country_code"
 }
 
 class MainActivity : ComponentActivity() {
 
-    private var currentLanguage: String = Locale.getDefault().language // Initialize with system default or a constant
-    private lateinit var loginViewModel: LoginViewModel // To hold ViewModel instance
+    // Initialize with a consistent default. ViewModel will load persisted lang later.
+    private var currentLanguage: String = "zh-TW"
+    private lateinit var loginViewModel: LoginViewModel
 
     override fun attachBaseContext(newBase: Context) {
-        // Load saved language from UserPreferencesRepository synchronously for attachBaseContext if possible,
-        // or use a reliable default. For simplicity, we'll use the 'currentLanguage' property,
-        // which will be updated by the ViewModel.
-        // The critical part is that after ViewModel loads, it will trigger a recreate if necessary.
-        Log.d("MainActivity", "attachBaseContext: currentLanguage = $currentLanguage")
+        Log.d("MainActivity", "attachBaseContext: currentLanguage before setLocale = $currentLanguage")
         super.attachBaseContext(LocaleHelper.setLocale(newBase, currentLanguage))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MainActivity", "onCreate: Start")
+        Log.d("MainActivity", "onCreate: Start, currentLanguage = $currentLanguage")
 
         val factory = LoginViewModelFactory(applicationContext)
-        // Initialize ViewModel using ViewModelProvider for Activity scope
         loginViewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
+        // Initialize PhoneNumberUtil in ViewModel
         val phoneNumberUtil = PhoneNumberUtil.createInstance(applicationContext)
-        loginViewModel.initializePhoneNumberUtil(phoneNumberUtil) // Ensure this is called
+        loginViewModel.initializePhoneNumberUtil(phoneNumberUtil)
 
-        // Initial load of language from ViewModel's state (which loads from DataStore)
-        // This helps sync MainActivity's currentLanguage with persisted preference ASAP.
-        // loginViewModel.uiState.value should reflect the state after Init event (which loads DataStore)
-        // because BaseViewModel initializes state eagerly.
-        // However, the Init event in LoginViewModel is asynchronous (viewModelScope.launch).
-        // So, the very first value of uiState.value.currentLanguage might be the default from LoginScreenState,
-        // not the one from DataStore yet.
-        // The LaunchedEffect observing appState.currentLanguage is more reliable for reacting to DataStore loaded language.
-
-        // Forcing an initial update of currentLanguage from ViewModel's *initial* default if they differ.
-        // This is before DataStore might have updated the ViewModel's state.
-        if (currentLanguage != loginViewModel.uiState.value.currentLanguage) {
-             Log.d("MainActivity", "onCreate: Initial language sync. VM default: ${loginViewModel.uiState.value.currentLanguage}, Activity: $currentLanguage.")
-             // If we set currentLanguage here, attachBaseContext might use this new one if a recreate happens
-             // before VM loads from DataStore. This could be fine.
-             // currentLanguage = loginViewModel.uiState.value.currentLanguage
-        }
-
+        // Removed direct read of loginViewModel.uiState.value here.
+        // MainActivity.currentLanguage will be updated by LaunchedEffect if needed after ViewModel loads state.
 
         setContent {
-            // Observe ViewModel's UI state
             val appState by loginViewModel.uiState.collectAsState()
-            Log.d("MainActivity", "setContent: Composing with language ${appState.currentLanguage} (from ViewModel state)")
+            Log.d("MainActivity", "setContent: Composing with ViewModel's language: ${appState.currentLanguage}. MainActivity's currentLanguage: $currentLanguage")
 
-
-            // Effect to handle language changes from ViewModel (after DataStore load or user selection)
-            // and trigger Activity recreation
             LaunchedEffect(appState.currentLanguage) {
-                Log.d("MainActivity", "LaunchedEffect: appState.currentLanguage = ${appState.currentLanguage}, MainActivity.currentLanguage = $currentLanguage")
+                Log.d("MainActivity", "LaunchedEffect: ViewModel language is ${appState.currentLanguage}, Activity language is $currentLanguage")
                 if (currentLanguage != appState.currentLanguage) {
-                    Log.d("MainActivity", "LaunchedEffect: Language changed. Recreating activity. New lang: ${appState.currentLanguage}")
+                    Log.d("MainActivity", "LaunchedEffect: Language mismatch. Updating Activity language to ${appState.currentLanguage} and recreating.")
                     currentLanguage = appState.currentLanguage
                     this@MainActivity.recreate()
+                } else {
+                    Log.d("MainActivity", "LaunchedEffect: Languages match. No recreation needed based on language.")
                 }
             }
 
-            // Theme uses the language state as a key to ensure recomposition on language change
             LoginAppTheme(key = appState.currentLanguage) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -109,9 +86,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// AppNavigation, LoginAppTheme, DefaultPreview as previously defined
-// Make sure LoginViewModel is passed correctly.
-
+// AppNavigation, LoginAppTheme, DefaultPreview should remain as previously defined.
+// Ensure correct imports and definitions for these are present.
 @Composable
 fun AppNavigation(loginViewModel: LoginViewModel) {
     val navController = rememberNavController()
@@ -135,9 +111,9 @@ fun LoginAppTheme(key: Any? = null, content: @Composable () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    // For preview, we need a context to create the factory
     val context = LocalContext.current
     val factory = LoginViewModelFactory(context.applicationContext)
+    // Use the Hilt/ViewModel convention for previews if applicable, or ensure factory provides a valid ViewModel
     val loginViewModel: LoginViewModel = viewModel(factory = factory)
     LoginAppTheme {
         AppNavigation(loginViewModel)
